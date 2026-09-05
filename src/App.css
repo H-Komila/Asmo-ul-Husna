@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Mobil ekranda skrollni ravon qilish va kartochkalar ko'rinishi */
+body {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Flashcard burilish effekti */
+.perspective-1000 {
+  perspective: 1000px;
+}
