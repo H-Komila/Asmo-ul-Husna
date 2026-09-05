@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { duasData } from './duasData';
 import { translations } from './translations';
+import { hadithsData } from './hadithsData';
 import "./App.css";
 
 // 99 TA ISMLAR BAZASI
@@ -405,6 +406,12 @@ export default function AsmaUlHusnaApp() {
         <button onClick={() => setIsFavOnly(!isFavOnly)} className={`border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition ${isFavOnly ? 'bg-amber-500 text-black' : 'bg-slate-800/80'}`}>
           {t.favs} ({favorites.length})
         </button>
+        <button 
+  onClick={() => setActiveModal('hadiths')} 
+  className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition"
+>
+  📜 Hadislar
+</button>
         <button onClick={handleInstallPWA} className="bg-slate-800/80 border border-amber-500/30 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition" title="Ilovani o'rnatish">
           📲
         </button>
@@ -611,6 +618,23 @@ export default function AsmaUlHusnaApp() {
                   <p className="text-slate-300 bg-slate-800/50 p-3.5 sm:p-4 rounded-xl border border-amber-500/20 my-3 text-xs sm:text-sm leading-relaxed">{selectedItem.quran}</p>
                 </div>
               )}
+              {/* Hadislar Modali */}
+{activeModal === 'hadiths' && (
+  <div>
+    <h3 className="text-lg sm:text-xl font-bold mb-4 text-amber-400">📜 Saḥīḥ Hadislar va Fazilatlar</h3>
+    <div className="flex flex-col gap-3 text-left">
+      {hadithsData.map(h => (
+        <div key={h.id} className="bg-slate-800/60 border border-amber-500/20 p-3.5 rounded-xl">
+          <h4 className="text-amber-400 font-bold text-xs sm:text-sm mb-1">{h.title}</h4>
+          <p className="text-base sm:text-lg font-serif text-right text-amber-200 my-1.5 leading-relaxed" dir="rtl">{h.arabic}</p>
+          <p className="text-[11px] text-slate-300 italic mb-1">{h.trans}</p>
+          <p className="text-xs text-slate-200 font-medium my-1">{h.meaning}</p>
+          <span className="text-[10px] text-amber-500/70 block text-right font-bold mt-2">📍 {h.source}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
               {/* Quiz Modal */}
               {activeModal === 'quiz' && quizQuestion && (
