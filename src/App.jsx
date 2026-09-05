@@ -107,7 +107,7 @@ const namesData = [
   { id: 99, arabic: "الصبور", trans: "As-Sobur", meaning: "Juda sabrli, jazolashga shoshilmaydigan.", quran: "Al-Baqara surasi, 153-oyat", audio: "099" }
 ];
 
-// NAMOZ VAQTLARI
+// RESPONSIVE NAMOZ VAQTLARI BLOKI
 function PrayerTimesCard({ lang }) {
   const [prayerTimes, setPrayerTimes] = useState(null);
   const [city, setCity] = useState('Tashkent');
@@ -134,14 +134,14 @@ function PrayerTimesCard({ lang }) {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 mt-6">
-      <div className="bg-slate-900/60 border border-amber-500/30 backdrop-blur-md rounded-3xl p-6 text-center shadow-xl">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <div className="text-left">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-200 to-amber-500 bg-clip-text text-transparent">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 mt-4 sm:mt-6">
+      <div className="bg-slate-900/60 border border-amber-500/30 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center shadow-xl">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
+          <div className="text-center sm:text-left">
+            <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-yellow-200 to-amber-500 bg-clip-text text-transparent">
               {t.prayerTitle}
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-[11px] sm:text-xs text-slate-400 mt-1">
               {new Date().toLocaleDateString('uz-UZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
@@ -149,7 +149,7 @@ function PrayerTimesCard({ lang }) {
           <select
             value={city}
             onChange={(e) => { setLoading(true); setCity(e.target.value); }}
-            className="bg-slate-800 border border-amber-500/40 text-amber-400 text-sm px-4 py-2 rounded-full focus:outline-none cursor-pointer"
+            className="w-full sm:w-auto bg-slate-800 border border-amber-500/40 text-amber-400 text-xs sm:text-sm px-4 py-2 rounded-full focus:outline-none cursor-pointer"
           >
             <option value="Tashkent">Toshkent</option>
             <option value="Samarkand">Samarqand</option>
@@ -163,14 +163,14 @@ function PrayerTimesCard({ lang }) {
         </div>
 
         {loading ? (
-          <div className="text-amber-400 text-sm animate-pulse py-4">Yuklanmoqda...</div>
+          <div className="text-amber-400 text-xs sm:text-sm animate-pulse py-4">Yuklanmoqda...</div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-3">
             {prayerNames.map((item) => (
-              <div key={item.key} className="bg-slate-800/50 border border-amber-500/20 p-3 rounded-2xl flex flex-col items-center">
-                <span className="text-2xl mb-1">{item.icon}</span>
-                <span className="text-xs text-slate-400 font-medium">{item.name}</span>
-                <span className="text-lg font-extrabold text-amber-400 mt-1">
+              <div key={item.key} className="bg-slate-800/50 border border-amber-500/20 p-2 sm:p-3 rounded-xl sm:rounded-2xl flex flex-col items-center">
+                <span className="text-lg sm:text-2xl mb-0.5 sm:mb-1">{item.icon}</span>
+                <span className="text-[10px] sm:text-xs text-slate-400 font-medium">{item.name}</span>
+                <span className="text-sm sm:text-lg font-extrabold text-amber-400 mt-0.5 sm:mt-1">
                   {prayerTimes ? prayerTimes[item.key] : '--:--'}
                 </span>
               </div>
@@ -203,7 +203,7 @@ export default function AsmaUlHusnaApp() {
   const [isListening, setIsListening] = useState(false);
 
   // Modallar
-  const [activeModal, setActiveModal] = useState(null); // 'tasbeh' | 'quran' | 'quiz' | 'flashcard' | 'random' | 'poster' | 'duas'
+  const [activeModal, setActiveModal] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
   // Tasbeh state
@@ -218,7 +218,7 @@ export default function AsmaUlHusnaApp() {
   const [fcIndex, setFcIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  // PWA Install Prompt State
+  // PWA Prompt
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
@@ -229,7 +229,6 @@ export default function AsmaUlHusnaApp() {
     localStorage.setItem('learnedNames', JSON.stringify(learnedNames));
   }, [learnedNames]);
 
-  // PWA o'rnatish hodisasini tutib olish
   useEffect(() => {
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -250,7 +249,6 @@ export default function AsmaUlHusnaApp() {
     }
   };
 
-  // Audio pleyer & Auto-Play mantiqi
   const playAudio = (item) => {
     if (playingAudioId === item.id) {
       audioRef.current.pause();
@@ -382,63 +380,62 @@ export default function AsmaUlHusnaApp() {
   const progressPercentage = Math.round((learnedNames.length / namesData.length) * 100);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 pb-20 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'}`}>
+    <div className={`min-h-screen transition-colors duration-300 pb-16 sm:pb-20 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'}`}>
       
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-slate-900/60 border-b border-amber-500/20 p-4 flex justify-center flex-wrap gap-2 sm:gap-3">
-        <button onClick={startAutoPlayAll} className={`border px-4 py-2 rounded-full text-sm font-medium transition ${isAutoPlay ? 'bg-amber-500 text-black border-amber-500 font-bold animate-pulse' : 'bg-slate-800/80 border-amber-500/30'}`}>
+      {/* RESPONSIVE TOP NAVBAR */}
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-slate-900/80 border-b border-amber-500/20 p-2.5 sm:p-4 flex justify-center flex-wrap gap-1.5 sm:gap-3">
+        <button onClick={startAutoPlayAll} className={`border px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition ${isAutoPlay ? 'bg-amber-500 text-black border-amber-500 font-bold animate-pulse' : 'bg-slate-800/80 border-amber-500/30'}`}>
           {isAutoPlay ? t.stopAutoPlay : t.autoPlay}
         </button>
-        <button onClick={() => startQuiz()} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-4 py-2 rounded-full text-sm font-medium transition">
+        <button onClick={() => startQuiz()} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition">
           {t.test}
         </button>
-        <button onClick={() => { setFcIndex(0); setIsFlipped(false); setActiveModal('flashcard'); }} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-4 py-2 rounded-full text-sm font-medium transition">
+        <button onClick={() => { setFcIndex(0); setIsFlipped(false); setActiveModal('flashcard'); }} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition">
           {t.flashcard}
         </button>
-        <button onClick={() => openTasbeh()} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-4 py-2 rounded-full text-sm font-medium transition">
+        <button onClick={() => openTasbeh()} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition">
           {t.tasbeh}
         </button>
-        <button onClick={() => setActiveModal('duas')} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-4 py-2 rounded-full text-sm font-medium transition">
+        <button onClick={() => setActiveModal('duas')} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition">
           {t.duas}
         </button>
-        <button onClick={() => { setSelectedItem(namesData[Math.floor(Math.random() * namesData.length)]); setActiveModal('random'); }} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-4 py-2 rounded-full text-sm font-medium transition">
+        <button onClick={() => { setSelectedItem(namesData[Math.floor(Math.random() * namesData.length)]); setActiveModal('random'); }} className="bg-slate-800/80 hover:bg-amber-500 hover:text-black border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition">
           {t.random}
         </button>
-        <button onClick={() => setIsFavOnly(!isFavOnly)} className={`border border-amber-500/30 px-4 py-2 rounded-full text-sm font-medium transition ${isFavOnly ? 'bg-amber-500 text-black' : 'bg-slate-800/80'}`}>
+        <button onClick={() => setIsFavOnly(!isFavOnly)} className={`border border-amber-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition ${isFavOnly ? 'bg-amber-500 text-black' : 'bg-slate-800/80'}`}>
           {t.favs} ({favorites.length})
         </button>
-        <button onClick={handleInstallPWA} className="bg-slate-800/80 border border-amber-500/30 px-3 py-2 rounded-full text-sm transition" title="Ilovani o'rnatish">
+        <button onClick={handleInstallPWA} className="bg-slate-800/80 border border-amber-500/30 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition" title="Ilovani o'rnatish">
           📲
         </button>
         
-        {/* Tilni almashtirish */}
         <select
           value={lang}
           onChange={(e) => setLang(e.target.value)}
-          className="bg-slate-800 border border-amber-500/30 text-xs px-3 py-2 rounded-full text-amber-400 focus:outline-none cursor-pointer"
+          className="bg-slate-800 border border-amber-500/30 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full text-amber-400 focus:outline-none cursor-pointer"
         >
           <option value="uz">UZ</option>
           <option value="en">EN</option>
           <option value="ru">RU</option>
         </select>
 
-        <button onClick={() => setIsDark(!isDark)} className="bg-slate-800/80 border border-amber-500/30 px-3 py-2 rounded-full text-sm transition">
+        <button onClick={() => setIsDark(!isDark)} className="bg-slate-800/80 border border-amber-500/30 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition">
           {isDark ? '☀️' : '🌙'}
         </button>
       </header>
 
-      {/* Namoz vaqtlari */}
+      {/* NAMOZ VAQTLARI */}
       <PrayerTimesCard lang={lang} />
 
-      {/* Progress Bar Section */}
-      <div className="max-w-7xl mx-auto px-4 mt-6">
-        <div className="bg-slate-900/50 border border-amber-500/20 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* RESPONSIVE PROGRESS BAR */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 mt-4 sm:mt-6">
+        <div className="bg-slate-900/50 border border-amber-500/20 p-3.5 sm:p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="w-full sm:w-1/2">
-            <div className="flex justify-between text-xs text-amber-400 font-bold mb-1">
+            <div className="flex justify-between text-[11px] sm:text-xs text-amber-400 font-bold mb-1">
               <span>{t.progressTitle}</span>
               <span>{learnedNames.length} / 99 ({progressPercentage}%)</span>
             </div>
-            <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-amber-500/20">
+            <div className="w-full bg-slate-800 h-2.5 sm:h-3 rounded-full overflow-hidden border border-amber-500/20">
               <motion.div
                 className="bg-gradient-to-r from-amber-500 to-yellow-300 h-full rounded-full"
                 initial={{ width: 0 }}
@@ -447,11 +444,11 @@ export default function AsmaUlHusnaApp() {
               />
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="w-full sm:w-auto flex justify-end">
             <select
               value={sortType}
               onChange={(e) => setSortType(e.target.value)}
-              className="bg-slate-800 border border-amber-500/30 text-xs px-3 py-2 rounded-xl text-inherit focus:outline-none"
+              className="w-full sm:w-auto bg-slate-800 border border-amber-500/30 text-[11px] sm:text-xs px-3 py-2 rounded-xl text-inherit focus:outline-none"
             >
               <option value="default">Tartib bo'yicha (1-99)</option>
               <option value="alphabet">Alifbo bo'yicha (A-Z)</option>
@@ -461,25 +458,25 @@ export default function AsmaUlHusnaApp() {
         </div>
       </div>
 
-      {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-yellow-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">
+      {/* MAIN CONTAINER */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-5xl font-extrabold bg-gradient-to-r from-yellow-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">
             {t.title}
           </h1>
-          <p className="text-slate-400 mt-2 text-sm">{t.subtitle}</p>
+          <p className="text-slate-400 mt-1.5 sm:mt-2 text-xs sm:text-sm">{t.subtitle}</p>
           
-          <div className="relative mt-6 max-w-xl mx-auto flex items-center">
+          <div className="relative mt-4 sm:mt-6 max-w-xl mx-auto flex items-center">
             <input
               type="text"
               placeholder={t.searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-6 py-3.5 pr-12 rounded-full border border-amber-500/30 bg-slate-900/50 text-inherit focus:outline-none focus:border-amber-500 transition shadow-inner"
+              className="w-full px-5 sm:px-6 py-3 sm:py-3.5 pr-12 rounded-full border border-amber-500/30 bg-slate-900/50 text-xs sm:text-sm text-inherit focus:outline-none focus:border-amber-500 transition shadow-inner"
             />
             <button
               onClick={startVoiceSearch}
-              className={`absolute right-4 p-2 rounded-full transition ${isListening ? 'bg-red-500 text-white animate-pulse' : 'text-slate-400 hover:text-amber-400'}`}
+              className={`absolute right-3.5 sm:right-4 p-1.5 sm:p-2 rounded-full transition ${isListening ? 'bg-red-500 text-white animate-pulse' : 'text-slate-400 hover:text-amber-400'}`}
               title="Ovozli qidiruv"
             >
               🎤
@@ -487,8 +484,8 @@ export default function AsmaUlHusnaApp() {
           </div>
         </div>
 
-        {/* Card Grid with Framer Motion */}
-        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* RESPONSIVE CARD GRID */}
+        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           <AnimatePresence>
             {filteredData.map(item => {
               const isFav = favorites.includes(item.id);
@@ -503,32 +500,32 @@ export default function AsmaUlHusnaApp() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                   key={item.id}
-                  className={`relative group bg-slate-900/40 border backdrop-blur-md rounded-3xl p-6 text-center flex flex-col justify-between hover:-translate-y-1 transition duration-300 shadow-lg ${isLearned ? 'border-emerald-500/50 bg-emerald-950/10' : 'border-amber-500/20 hover:border-amber-500/60'}`}
+                  className={`relative group bg-slate-900/40 border backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center flex flex-col justify-between hover:-translate-y-1 transition duration-300 shadow-lg ${isLearned ? 'border-emerald-500/50 bg-emerald-950/10' : 'border-amber-500/20 hover:border-amber-500/60'}`}
                 >
-                  <span className="absolute top-4 left-5 text-xs font-bold opacity-60">#{item.id}</span>
+                  <span className="absolute top-3 sm:top-4 left-4 sm:left-5 text-[10px] sm:text-xs font-bold opacity-60">#{item.id}</span>
                   <button
                     onClick={() => toggleLearned(item.id)}
-                    className={`absolute top-4 right-5 text-xs px-2.5 py-1 rounded-full border transition ${isLearned ? 'bg-emerald-500 text-black border-emerald-500 font-bold' : 'border-slate-700 text-slate-500 hover:border-amber-500'}`}
+                    className={`absolute top-3 sm:top-4 right-4 sm:right-5 text-[10px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border transition ${isLearned ? 'bg-emerald-500 text-black border-emerald-500 font-bold' : 'border-slate-700 text-slate-500 hover:border-amber-500'}`}
                   >
                     {isLearned ? `✓ ${t.learned}` : t.addLearned}
                   </button>
 
-                  <div className="my-4">
-                    <h2 className="text-4xl font-serif text-amber-400 mb-2" dir="rtl">{item.arabic}</h2>
-                    <h3 className="text-xl font-bold">{item.trans}</h3>
-                    <p className="text-xs text-slate-400 mt-2 line-clamp-2">{item.meaning}</p>
+                  <div className="my-3 sm:my-4">
+                    <h2 className="text-3xl sm:text-4xl font-serif text-amber-400 mb-1.5 sm:mb-2" dir="rtl">{item.arabic}</h2>
+                    <h3 className="text-lg sm:text-xl font-bold">{item.trans}</h3>
+                    <p className="text-[11px] sm:text-xs text-slate-400 mt-1.5 sm:mt-2 line-clamp-2">{item.meaning}</p>
                   </div>
 
-                  <div className="flex justify-center flex-wrap gap-2 mt-4 pt-4 border-t border-slate-800/60">
-                    <button onClick={() => playAudio(item)} className={`w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center transition ${isPlaying ? 'bg-amber-500 text-black animate-pulse' : 'hover:bg-amber-500 hover:text-black'}`} title="Eshitish">
+                  <div className="flex justify-center flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-800/60">
+                    <button onClick={() => playAudio(item)} className={`w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center text-xs sm:text-sm transition ${isPlaying ? 'bg-amber-500 text-black animate-pulse' : 'hover:bg-amber-500 hover:text-black'}`} title="Eshitish">
                       {isPlaying ? '⏸' : '🔊'}
                     </button>
-                    <button onClick={() => toggleFavorite(item.id)} className={`w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center transition ${isFav ? 'bg-red-500/20 border-red-500 text-red-500' : 'hover:bg-amber-500 hover:text-black'}`} title="Saralash">⭐</button>
-                    <button onClick={() => { setSelectedItem(item); setActiveModal('quran'); }} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center hover:bg-amber-500 hover:text-black transition" title="Qur'ondagi o'rni">📖</button>
-                    <button onClick={() => openTasbeh(item)} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center hover:bg-amber-500 hover:text-black transition" title="Tasbeh">📿</button>
-                    <button onClick={() => { setSelectedItem(item); setActiveModal('poster'); }} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center hover:bg-amber-500 hover:text-black transition" title="Poster yaratish">🖼</button>
-                    <button onClick={() => copyText(item)} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center hover:bg-amber-500 hover:text-black transition" title="Nusxalash">📋</button>
-                    <button onClick={() => shareToSocial(item, 'telegram')} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center hover:bg-blue-500 hover:text-white transition" title="Telegramda ulashish">✈️</button>
+                    <button onClick={() => toggleFavorite(item.id)} className={`w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center text-xs sm:text-sm transition ${isFav ? 'bg-red-500/20 border-red-500 text-red-500' : 'hover:bg-amber-500 hover:text-black'}`} title="Saralash">⭐</button>
+                    <button onClick={() => { setSelectedItem(item); setActiveModal('quran'); }} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center text-xs sm:text-sm hover:bg-amber-500 hover:text-black transition" title="Qur'ondagi o'rni">📖</button>
+                    <button onClick={() => openTasbeh(item)} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center text-xs sm:text-sm hover:bg-amber-500 hover:text-black transition" title="Tasbeh">📿</button>
+                    <button onClick={() => { setSelectedItem(item); setActiveModal('poster'); }} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center text-xs sm:text-sm hover:bg-amber-500 hover:text-black transition" title="Poster yaratish">🖼</button>
+                    <button onClick={() => copyText(item)} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center text-xs sm:text-sm hover:bg-amber-500 hover:text-black transition" title="Nusxalash">📋</button>
+                    <button onClick={() => shareToSocial(item, 'telegram')} className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center text-xs sm:text-sm hover:bg-blue-500 hover:text-white transition" title="Telegramda ulashish">✈️</button>
                   </div>
                 </motion.div>
               );
@@ -537,49 +534,49 @@ export default function AsmaUlHusnaApp() {
         </motion.div>
       </main>
 
-      {/* Modals Container */}
+      {/* RESPONSIVE MODALS */}
       <AnimatePresence>
         {activeModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
           >
             <motion.div
               initial={{ scale: 0.8, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 20 }}
-              className="relative w-full max-w-md bg-slate-900 border border-amber-500/40 rounded-3xl p-6 text-center shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-md bg-slate-900 border border-amber-500/40 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-center shadow-2xl max-h-[90vh] overflow-y-auto"
             >
-              <button onClick={() => setActiveModal(null)} className="absolute top-4 right-5 text-2xl text-slate-400 hover:text-white">✕</button>
+              <button onClick={() => setActiveModal(null)} className="absolute top-3 sm:top-4 right-4 sm:right-5 text-xl sm:text-2xl text-slate-400 hover:text-white">✕</button>
 
               {/* Poster Modal */}
               {activeModal === 'poster' && selectedItem && (
                 <div>
-                  <h3 className="text-lg font-bold mb-4">{t.downloadPoster}</h3>
-                  <div className="bg-gradient-to-br from-slate-900 via-amber-950 to-slate-900 border-2 border-amber-500 p-8 rounded-2xl text-center shadow-2xl my-4">
-                    <span className="text-amber-400 text-xs font-bold block mb-2"># {selectedItem.id} - Asmaul Husna</span>
-                    <h2 className="text-5xl font-serif text-amber-300 my-4" dir="rtl">{selectedItem.arabic}</h2>
-                    <h3 className="text-2xl font-extrabold text-white">{selectedItem.trans}</h3>
-                    <p className="text-xs text-slate-300 mt-3 leading-relaxed">{selectedItem.meaning}</p>
-                    <p className="text-[10px] text-amber-500/60 mt-4 border-t border-amber-500/20 pt-2">{selectedItem.quran}</p>
+                  <h3 className="text-base sm:text-lg font-bold mb-3">{t.downloadPoster}</h3>
+                  <div className="bg-gradient-to-br from-slate-900 via-amber-950 to-slate-900 border-2 border-amber-500 p-6 sm:p-8 rounded-2xl text-center shadow-2xl my-3">
+                    <span className="text-amber-400 text-[10px] sm:text-xs font-bold block mb-1.5"># {selectedItem.id} - Asmaul Husna</span>
+                    <h2 className="text-4xl sm:text-5xl font-serif text-amber-300 my-3" dir="rtl">{selectedItem.arabic}</h2>
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-white">{selectedItem.trans}</h3>
+                    <p className="text-xs text-slate-300 mt-2.5 leading-relaxed">{selectedItem.meaning}</p>
+                    <p className="text-[10px] text-amber-500/60 mt-3 border-t border-amber-500/20 pt-2">{selectedItem.quran}</p>
                   </div>
-                  <p className="text-xs text-slate-400">Ushbu chiroyli kartochkani skrinshot qilib saqlab olishingiz mumkin!</p>
+                  <p className="text-[11px] sm:text-xs text-slate-400">Ushbu chiroyli kartochkani skrinshot qilib saqlab olishingiz mumkin!</p>
                 </div>
               )}
 
               {/* Duas Modal */}
               {activeModal === 'duas' && (
                 <div>
-                  <h3 className="text-xl font-bold mb-4">🤲 Ismlarga Bog'liq Duolar</h3>
-                  <div className="flex flex-col gap-4 text-left">
+                  <h3 className="text-lg sm:text-xl font-bold mb-4">🤲 Ismlarga Bog'liq Duolar</h3>
+                  <div className="flex flex-col gap-3 text-left">
                     {duasData.map(d => (
-                      <div key={d.id} className="bg-slate-800/60 border border-amber-500/20 p-4 rounded-xl">
-                        <h4 className="text-amber-400 font-bold text-sm mb-1">{d.title}</h4>
-                        <p className="text-xl font-serif text-right text-amber-200 my-2" dir="rtl">{d.arabic}</p>
-                        <p className="text-xs text-slate-300 italic mb-1">{d.trans}</p>
-                        <p className="text-xs text-slate-400">{d.meaning}</p>
+                      <div key={d.id} className="bg-slate-800/60 border border-amber-500/20 p-3.5 rounded-xl">
+                        <h4 className="text-amber-400 font-bold text-xs sm:text-sm mb-1">{d.title}</h4>
+                        <p className="text-lg sm:text-xl font-serif text-right text-amber-200 my-1.5" dir="rtl">{d.arabic}</p>
+                        <p className="text-[11px] text-slate-300 italic mb-1">{d.trans}</p>
+                        <p className="text-[11px] text-slate-400">{d.meaning}</p>
                       </div>
                     ))}
                   </div>
@@ -589,19 +586,19 @@ export default function AsmaUlHusnaApp() {
               {/* Tasbeh Modal */}
               {activeModal === 'tasbeh' && selectedItem && (
                 <div>
-                  <h3 className="text-xl font-bold mb-4">{selectedItem.trans} ({selectedItem.arabic})</h3>
-                  <div className="flex justify-center gap-2 mb-4">
+                  <h3 className="text-lg sm:text-xl font-bold mb-3">{selectedItem.trans} ({selectedItem.arabic})</h3>
+                  <div className="flex justify-center gap-2 mb-3">
                     {[33, 99, 100].map(t => (
-                      <button key={t} onClick={() => { setTasbehTarget(t); setTasbehCount(0); }} className={`px-3 py-1 rounded-lg border text-sm ${tasbehTarget === t ? 'bg-amber-500 text-black border-amber-500 font-bold' : 'border-amber-500/30'}`}>
+                      <button key={t} onClick={() => { setTasbehTarget(t); setTasbehCount(0); }} className={`px-3 py-1 rounded-lg border text-xs sm:text-sm ${tasbehTarget === t ? 'bg-amber-500 text-black border-amber-500 font-bold' : 'border-amber-500/30'}`}>
                         {t}
                       </button>
                     ))}
                   </div>
-                  <div className="text-5xl font-extrabold text-amber-400 my-6">{tasbehCount} / {tasbehTarget}</div>
-                  <button onClick={handleTasbehClick} className="w-full py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-lg shadow-lg active:scale-95 transition">
+                  <div className="text-4xl sm:text-5xl font-extrabold text-amber-400 my-4 sm:my-6">{tasbehCount} / {tasbehTarget}</div>
+                  <button onClick={handleTasbehClick} className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-base sm:text-lg shadow-lg active:scale-95 transition">
                     Zikr qilish
                   </button>
-                  <button onClick={() => setTasbehCount(0)} className="mt-4 px-4 py-2 border border-amber-500/30 rounded-full text-xs text-slate-400 hover:text-white">
+                  <button onClick={() => setTasbehCount(0)} className="mt-3 px-4 py-1.5 border border-amber-500/30 rounded-full text-xs text-slate-400 hover:text-white">
                     Qayta boshlash
                   </button>
                 </div>
@@ -610,16 +607,16 @@ export default function AsmaUlHusnaApp() {
               {/* Quran Verse Modal */}
               {activeModal === 'quran' && selectedItem && (
                 <div>
-                  <h3 className="text-xl font-bold mb-3">{selectedItem.trans} - Qur'ondagi o'rni</h3>
-                  <p className="text-slate-300 bg-slate-800/50 p-4 rounded-xl border border-amber-500/20 my-4 text-sm leading-relaxed">{selectedItem.quran}</p>
+                  <h3 className="text-lg sm:text-xl font-bold mb-3">{selectedItem.trans} - Qur'ondagi o'rni</h3>
+                  <p className="text-slate-300 bg-slate-800/50 p-3.5 sm:p-4 rounded-xl border border-amber-500/20 my-3 text-xs sm:text-sm leading-relaxed">{selectedItem.quran}</p>
                 </div>
               )}
 
               {/* Quiz Modal */}
               {activeModal === 'quiz' && quizQuestion && (
                 <div>
-                  <div className="text-sm text-amber-400 font-bold mb-2">To'plangan ball: {quizScore}</div>
-                  <h3 className="text-lg font-bold mb-4">"{quizQuestion.current.trans}" ismining ma'nosi nima?</h3>
+                  <div className="text-xs sm:text-sm text-amber-400 font-bold mb-2">To'plangan ball: {quizScore}</div>
+                  <h3 className="text-base sm:text-lg font-bold mb-3">"{quizQuestion.current.trans}" ismining ma'nosi nima?</h3>
                   <div className="flex flex-col gap-2">
                     {quizQuestion.options.map(opt => (
                       <button
@@ -633,7 +630,7 @@ export default function AsmaUlHusnaApp() {
                           }
                           generateQuiz();
                         }}
-                        className="p-3 rounded-full border border-amber-500/30 bg-slate-800/40 hover:bg-amber-500 hover:text-black text-sm transition"
+                        className="p-2.5 sm:p-3 rounded-full border border-amber-500/30 bg-slate-800/40 hover:bg-amber-500 hover:text-black text-xs sm:text-sm transition"
                       >
                         {opt.meaning}
                       </button>
@@ -645,26 +642,26 @@ export default function AsmaUlHusnaApp() {
               {/* Flashcard Modal */}
               {activeModal === 'flashcard' && (
                 <div>
-                  <div className="text-xs text-slate-400 mb-2">{fcIndex + 1} / {namesData.length}</div>
+                  <div className="text-[11px] sm:text-xs text-slate-400 mb-2">{fcIndex + 1} / {namesData.length}</div>
                   <motion.div
                     onClick={() => setIsFlipped(!isFlipped)}
                     animate={{ rotateY: isFlipped ? 180 : 0 }}
                     transition={{ duration: 0.4 }}
-                    className="w-full h-48 bg-slate-800/80 border-2 border-amber-500 rounded-2xl flex flex-col items-center justify-center p-4 cursor-pointer my-4 shadow-inner"
+                    className="w-full h-40 sm:h-48 bg-slate-800/80 border-2 border-amber-500 rounded-2xl flex flex-col items-center justify-center p-4 cursor-pointer my-3 shadow-inner"
                   >
                     {!isFlipped ? (
                       <div>
-                        <span className="text-xs text-amber-400 mb-2 block">#{namesData[fcIndex].id}</span>
-                        <h2 className="text-4xl font-serif text-amber-400">{namesData[fcIndex].arabic}</h2>
-                        <p className="text-lg font-bold mt-2">{namesData[fcIndex].trans}</p>
+                        <span className="text-[10px] sm:text-xs text-amber-400 mb-1 block">#{namesData[fcIndex].id}</span>
+                        <h2 className="text-3xl sm:text-4xl font-serif text-amber-400">{namesData[fcIndex].arabic}</h2>
+                        <p className="text-base sm:text-lg font-bold mt-1.5">{namesData[fcIndex].trans}</p>
                       </div>
                     ) : (
-                      <p className="text-sm text-slate-200 transform [transform:rotateY(180deg)]">{namesData[fcIndex].meaning}</p>
+                      <p className="text-xs sm:text-sm text-slate-200 transform [transform:rotateY(180deg)]">{namesData[fcIndex].meaning}</p>
                     )}
                   </motion.div>
-                  <div className="flex justify-between items-center mt-4">
-                    <button onClick={() => { setIsFlipped(false); setFcIndex((fcIndex - 1 + namesData.length) % namesData.length); }} className="px-4 py-2 border border-amber-500/30 rounded-full text-sm">Oldingisi</button>
-                    <button onClick={() => { setIsFlipped(false); setFcIndex((fcIndex + 1) % namesData.length); }} className="px-4 py-2 border border-amber-500/30 rounded-full text-sm">Keyingisi</button>
+                  <div className="flex justify-between items-center mt-3">
+                    <button onClick={() => { setIsFlipped(false); setFcIndex((fcIndex - 1 + namesData.length) % namesData.length); }} className="px-3.5 py-1.5 border border-amber-500/30 rounded-full text-xs sm:text-sm">Oldingisi</button>
+                    <button onClick={() => { setIsFlipped(false); setFcIndex((fcIndex + 1) % namesData.length); }} className="px-3.5 py-1.5 border border-amber-500/30 rounded-full text-xs sm:text-sm">Keyingisi</button>
                   </div>
                 </div>
               )}
@@ -672,10 +669,10 @@ export default function AsmaUlHusnaApp() {
               {/* Random Name Modal */}
               {activeModal === 'random' && selectedItem && (
                 <div>
-                  <span className="text-xs text-amber-400">Kun Ismi</span>
-                  <h2 className="text-5xl font-serif text-amber-400 my-3" dir="rtl">{selectedItem.arabic}</h2>
-                  <h3 className="text-2xl font-bold">{selectedItem.trans}</h3>
-                  <p className="text-sm text-slate-300 mt-3 bg-slate-800/50 p-3 rounded-xl border border-amber-500/20">{selectedItem.meaning}</p>
+                  <span className="text-[10px] sm:text-xs text-amber-400">Kun Ismi</span>
+                  <h2 className="text-4xl sm:text-5xl font-serif text-amber-400 my-2 sm:my-3" dir="rtl">{selectedItem.arabic}</h2>
+                  <h3 className="text-xl sm:text-2xl font-bold">{selectedItem.trans}</h3>
+                  <p className="text-xs sm:text-sm text-slate-300 mt-3 bg-slate-800/50 p-3 rounded-xl border border-amber-500/20">{selectedItem.meaning}</p>
                 </div>
               )}
 
