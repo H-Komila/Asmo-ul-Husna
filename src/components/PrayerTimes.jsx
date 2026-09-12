@@ -219,50 +219,50 @@ export default function PrayerTimesCard({ lang }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-4 mt-4 sm:mt-6 print:m-0 print:p-0">
+    <div className="w-full max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 my-2 sm:my-6 print:m-0 print:p-0">
       {/* Audio pleyer */}
       <audio ref={audioRef} src={adhanAudioSources[selectedAdhan]} preload="auto" />
 
-      <div className="bg-slate-900/80 border border-amber-500/30 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl text-slate-100">
+      <div className="bg-slate-900/90 border border-amber-500/30 backdrop-blur-md rounded-2xl sm:rounded-3xl p-2.5 sm:p-6 shadow-2xl text-slate-100">
         
         {/* Yuqori Panel */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 print:hidden">
-          <div className="text-center md:text-left">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-200 to-amber-500 bg-clip-text text-transparent">
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-4 sm:mb-6 gap-3 print:hidden">
+          <div className="text-center lg:text-left w-full lg:w-auto">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-yellow-200 to-amber-500 bg-clip-text text-transparent">
               {t.prayerTitle}
             </h2>
-            <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 justify-center md:justify-start">
+            <div className="flex flex-wrap items-center gap-1.5 text-[10px] sm:text-xs text-slate-400 mt-1 justify-center lg:justify-start">
               <span>{new Date().toLocaleDateString('uz-UZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
               {hijriDate && (
-                <span className="bg-amber-500/10 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">
+                <span className="bg-amber-500/10 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
                   {hijriDate.day} {hijriDate.month.en} {hijriDate.year} H
                 </span>
               )}
             </div>
           </div>
 
-          {/* Menyu Tugmalari */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
+          {/* Menyu Tugmalari (Mobil responsive grid) */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 w-full lg:w-auto">
             <button
               onClick={handleGPSLocation}
               title="GPS orqali joylashuvni aniqlash"
-              className="p-2 bg-slate-800 hover:bg-slate-700 border border-amber-500/40 text-amber-400 rounded-full transition"
+              className="p-2 bg-slate-800 hover:bg-slate-700 border border-amber-500/40 text-amber-400 rounded-xl transition text-xs sm:text-sm"
             >
               📍
             </button>
 
             <button
               onClick={toggleNotifications}
-              className={`text-xs px-3 py-2 rounded-full border transition ${
+              className={`text-[11px] sm:text-xs px-2.5 py-2 rounded-xl border transition ${
                 notificationsEnabled ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300' : 'bg-slate-800 border-amber-500/40 text-slate-400'
               }`}
             >
-              {notificationsEnabled ? '🔔 Bildirishnoma Yoqilgan' : '🔕 Bildirishnoma'}
+              {notificationsEnabled ? '🔔 Yoqilgan' : '🔕 Bildirishnoma'}
             </button>
 
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`text-xs px-3 py-2 rounded-full border transition ${
+              className={`text-[11px] sm:text-xs px-2.5 py-2 rounded-xl border transition ${
                 soundEnabled ? 'bg-amber-500/20 border-amber-500/50 text-amber-300' : 'bg-slate-800 border-amber-500/40 text-slate-400'
               }`}
             >
@@ -271,7 +271,7 @@ export default function PrayerTimesCard({ lang }) {
 
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 bg-slate-800 hover:bg-slate-700 border border-amber-500/40 text-amber-400 rounded-full transition"
+              className="p-2 bg-slate-800 hover:bg-slate-700 border border-amber-500/40 text-amber-400 rounded-xl transition text-xs sm:text-sm"
               title="Sozlamalar"
             >
               ⚙️
@@ -280,7 +280,7 @@ export default function PrayerTimesCard({ lang }) {
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="bg-slate-800 border border-amber-500/40 text-amber-400 text-xs sm:text-sm px-4 py-2 rounded-full focus:outline-none cursor-pointer"
+              className="bg-slate-800 border border-amber-500/40 text-amber-400 text-[11px] sm:text-sm px-2.5 py-2 rounded-xl focus:outline-none cursor-pointer w-full sm:w-auto text-center"
             >
               <option value="Tashkent">Toshkent</option>
               <option value="Samarkand">Samarqand</option>
@@ -294,18 +294,18 @@ export default function PrayerTimesCard({ lang }) {
           </div>
         </div>
 
-        {/* Tab Navigator */}
-        <div className="flex border-b border-amber-500/20 mb-6 gap-2 sm:gap-4 justify-center sm:justify-start print:hidden overflow-x-auto pb-2">
+        {/* Tab Navigator (Scrollable) */}
+        <div className="flex border-b border-amber-500/20 mb-4 sm:mb-6 gap-1.5 print:hidden overflow-x-auto pb-2 scrollbar-none">
           {[
             { id: 'daily', label: 'Kunlik', icon: '🗓️' },
-            { id: 'ramadan', label: 'Ramazon / Roʻza', icon: '🌙' },
+            { id: 'ramadan', label: 'Ramazon', icon: '🌙' },
             { id: 'monthly', label: 'Oylik Taqvim', icon: '📅' },
             { id: 'qibla', label: 'Qibla Kompasi', icon: '🧩' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap transition ${
                 activeTab === tab.id
                   ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                   : 'text-slate-400 hover:text-slate-200'
@@ -319,18 +319,18 @@ export default function PrayerTimesCard({ lang }) {
 
         {/* Modal: Sozlamalar */}
         {showSettings && (
-          <div className="mb-6 p-4 bg-slate-800/90 border border-amber-500/40 rounded-2xl print:hidden">
-            <h3 className="text-sm font-bold text-amber-300 mb-3 flex items-center justify-between">
-              <span>⚙️ Qoshimcha Sozlamalar</span>
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-slate-800/90 border border-amber-500/40 rounded-xl print:hidden">
+            <h3 className="text-xs sm:text-sm font-bold text-amber-300 mb-3 flex items-center justify-between">
+              <span>⚙️ Qo'shimcha Sozlamalar</span>
               <button onClick={() => setShowSettings(false)} className="text-slate-400 hover:text-white">✕</button>
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
                 <label className="block text-slate-400 mb-1">Hisoblash Metodi:</label>
                 <select
                   value={method}
                   onChange={(e) => setMethod(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-amber-400"
+                  className="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-amber-400 focus:outline-none"
                 >
                   <option value="3">Muslim World League (MWL)</option>
                   <option value="13">Diyanet İşleri Başkanlığı</option>
@@ -344,7 +344,7 @@ export default function PrayerTimesCard({ lang }) {
                 <select
                   value={selectedAdhan}
                   onChange={(e) => setSelectedAdhan(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-amber-400"
+                  className="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-amber-400 focus:outline-none"
                 >
                   <option value="makkah">Makka Azoni</option>
                   <option value="madinah">Madina Azoni</option>
@@ -360,17 +360,17 @@ export default function PrayerTimesCard({ lang }) {
           <>
             {/* Next Prayer Countdown */}
             {nextPrayer && !loading && (
-              <div className="mb-6 p-4 bg-slate-800/60 border border-amber-500/20 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl">{nextPrayer.icon}</span>
-                  <div className="text-left">
-                    <p className="text-xs text-slate-400">Keyingi namoz vaqti</p>
-                    <p className="text-lg font-bold text-amber-300">{nextPrayer.name}</p>
+              <div className="mb-4 p-2.5 sm:p-4 bg-slate-800/60 border border-amber-500/20 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-3xl">{nextPrayer.icon}</span>
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-slate-400">Keyingi namoz vaqti</p>
+                    <p className="text-sm sm:text-lg font-bold text-amber-300">{nextPrayer.name}</p>
                   </div>
                 </div>
-                <div className="text-center sm:text-right">
-                  <p className="text-xs text-slate-400">Qolgan vaqt</p>
-                  <p className="text-2xl font-mono font-black text-amber-400 tracking-widest">{timeLeft}</p>
+                <div className="sm:text-right">
+                  <p className="text-[10px] sm:text-xs text-slate-400">Qolgan vaqt</p>
+                  <p className="text-lg sm:text-2xl font-mono font-black text-amber-400 tracking-wider sm:tracking-widest">{timeLeft}</p>
                 </div>
               </div>
             )}
@@ -379,27 +379,27 @@ export default function PrayerTimesCard({ lang }) {
             {loading ? (
               <div className="text-amber-400 text-xs animate-pulse py-8 text-center">Yuklanmoqda...</div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-3">
                 {prayerNames.map((item) => {
                   const isActive = activePrayer === item.key;
                   return (
                     <div
                       key={item.key}
-                      className={`p-3 rounded-2xl flex flex-col items-center border transition-all duration-300 ${
+                      className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl flex flex-col items-center border transition-all duration-300 ${
                         isActive
-                          ? 'bg-amber-500/20 border-amber-400 scale-105 shadow-lg shadow-amber-500/10'
+                          ? 'bg-amber-500/20 border-amber-400 shadow-md shadow-amber-500/10'
                           : 'bg-slate-800/40 border-amber-500/15 hover:border-amber-500/40'
                       }`}
                     >
-                      <span className="text-2xl mb-1">{item.icon}</span>
-                      <span className={`text-xs font-medium ${isActive ? 'text-amber-300 font-bold' : 'text-slate-400'}`}>
+                      <span className="text-lg sm:text-2xl mb-0.5">{item.icon}</span>
+                      <span className={`text-[10px] sm:text-xs font-medium ${isActive ? 'text-amber-300 font-bold' : 'text-slate-400'}`}>
                         {item.name}
                       </span>
-                      <span className={`text-base sm:text-lg font-extrabold mt-1 ${isActive ? 'text-yellow-200' : 'text-amber-400'}`}>
+                      <span className={`text-xs sm:text-base font-extrabold mt-0.5 ${isActive ? 'text-yellow-200' : 'text-amber-400'}`}>
                         {prayerTimes ? prayerTimes[item.key] : '--:--'}
                       </span>
                       {isActive && (
-                        <span className="mt-1 text-[9px] bg-amber-500/40 text-amber-200 px-2 py-0.5 rounded-full font-semibold">
+                        <span className="mt-1 text-[8px] sm:text-[9px] bg-amber-500/40 text-amber-200 px-1.5 py-0.5 rounded-full font-semibold">
                           Hozirgi
                         </span>
                       )}
@@ -410,9 +410,9 @@ export default function PrayerTimesCard({ lang }) {
             )}
 
             {/* Kunlik Oyat / Hadis Karti */}
-            <div className="mt-6 p-4 bg-slate-800/40 border border-amber-500/20 rounded-2xl text-center">
-              <span className="text-xs text-amber-400/80 font-bold tracking-wider uppercase">Kun Oyati</span>
-              <p className="text-xs sm:text-sm text-slate-300 italic mt-1">
+            <div className="mt-4 p-3 sm:p-4 bg-slate-800/40 border border-amber-500/20 rounded-xl sm:rounded-2xl text-center">
+              <span className="text-[9px] sm:text-xs text-amber-400/80 font-bold tracking-wider uppercase">Kun Oyati</span>
+              <p className="text-[11px] sm:text-sm text-slate-300 italic mt-1 leading-normal">
                 «Albatta, namoz moʻminlarga vaqtida farz qilindi.» (Niso surasi, 103-oyat)
               </p>
             </div>
@@ -421,35 +421,35 @@ export default function PrayerTimesCard({ lang }) {
 
         {/* 2. RAMAZON / RO'ZA REJIMI */}
         {activeTab === 'ramadan' && prayerTimes && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 bg-slate-800/50 border border-amber-500/30 rounded-2xl flex items-center justify-between">
+          <div className="space-y-3 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
+              <div className="p-3 sm:p-4 bg-slate-800/50 border border-amber-500/30 rounded-xl sm:rounded-2xl flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400">Saharlik (Bamdodgacha)</p>
-                  <p className="text-xl font-bold text-amber-300">{prayerTimes['Fajr']}</p>
+                  <p className="text-[10px] sm:text-xs text-slate-400">Saharlik (Bamdodgacha)</p>
+                  <p className="text-base sm:text-xl font-bold text-amber-300">{prayerTimes['Fajr']}</p>
                 </div>
-                <span className="text-3xl">🌙</span>
+                <span className="text-2xl sm:text-3xl">🌙</span>
               </div>
-              <div className="p-4 bg-slate-800/50 border border-amber-500/30 rounded-2xl flex items-center justify-between">
+              <div className="p-3 sm:p-4 bg-slate-800/50 border border-amber-500/30 rounded-xl sm:rounded-2xl flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400">Iftorlik (Shom vaqti)</p>
-                  <p className="text-xl font-bold text-amber-300">{prayerTimes['Maghrib']}</p>
+                  <p className="text-[10px] sm:text-xs text-slate-400">Iftorlik (Shom vaqti)</p>
+                  <p className="text-base sm:text-xl font-bold text-amber-300">{prayerTimes['Maghrib']}</p>
                 </div>
-                <span className="text-3xl">🌇</span>
+                <span className="text-2xl sm:text-3xl">🌇</span>
               </div>
             </div>
 
             {/* Duolar */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-              <div className="p-4 bg-slate-800/30 border border-slate-700 rounded-xl">
-                <h4 className="text-xs font-bold text-amber-400 mb-1">Saharlik (Ogʻiz yopish) duosi:</h4>
-                <p className="text-xs text-slate-300 italic">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 text-left">
+              <div className="p-3 sm:p-4 bg-slate-800/30 border border-slate-700 rounded-xl">
+                <h4 className="text-[11px] sm:text-xs font-bold text-amber-400 mb-1">Saharlik (Ogʻiz yopish) duosi:</h4>
+                <p className="text-[11px] sm:text-xs text-slate-300 italic leading-snug">
                   "Navaytu an asuma sovma shahri ramazona minal fajri ilal maghribi, kholisan lillahi ta'ala. Allohu akbar."
                 </p>
               </div>
-              <div className="p-4 bg-slate-800/30 border border-slate-700 rounded-xl">
-                <h4 className="text-xs font-bold text-amber-400 mb-1">Iftorlik (Ogʻiz ochish) duosi:</h4>
-                <p className="text-xs text-slate-300 italic">
+              <div className="p-3 sm:p-4 bg-slate-800/30 border border-slate-700 rounded-xl">
+                <h4 className="text-[11px] sm:text-xs font-bold text-amber-400 mb-1">Iftorlik (Ogʻiz ochish) duosi:</h4>
+                <p className="text-[11px] sm:text-xs text-slate-300 italic leading-snug">
                   "Allohumma laka sumtu va bika aamantu va 'alayka tavakkaltu va 'ala rizqika aftartu..."
                 </p>
               </div>
@@ -460,27 +460,27 @@ export default function PrayerTimesCard({ lang }) {
         {/* 3. OYLIK TAQVIM VIEW */}
         {activeTab === 'monthly' && (
           <div>
-            <div className="flex justify-between items-center mb-4 print:hidden">
-              <p className="text-xs text-slate-400">{city} boʻyicha oylik jadval</p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2 print:hidden">
+              <p className="text-[10px] sm:text-xs text-slate-400">{city} boʻyicha oylik jadval</p>
               <button
                 onClick={handlePrint}
-                className="text-xs px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg hover:bg-amber-500/30 transition"
+                className="text-[10px] sm:text-xs px-2.5 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg hover:bg-amber-500/30 transition self-end sm:self-auto"
               >
                 🖨️ Chop etish / PDF
               </button>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+            <div className="overflow-x-auto rounded-xl border border-amber-500/20">
+              <table className="w-full text-left text-[11px] sm:text-xs border-collapse min-w-[480px]">
                 <thead>
-                  <tr className="border-b border-amber-500/30 text-amber-300">
-                    <th className="p-2">Kun</th>
-                    <th className="p-2">Bamdod</th>
-                    <th className="p-2">Quyosh</th>
-                    <th className="p-2">Peshin</th>
-                    <th className="p-2">Asr</th>
-                    <th className="p-2">Shom</th>
-                    <th className="p-2">Xufton</th>
+                  <tr className="border-b border-amber-500/30 text-amber-300 bg-slate-800/50">
+                    <th className="p-1.5 sm:p-2.5">Kun</th>
+                    <th className="p-1.5 sm:p-2.5">Bamdod</th>
+                    <th className="p-1.5 sm:p-2.5">Quyosh</th>
+                    <th className="p-1.5 sm:p-2.5">Peshin</th>
+                    <th className="p-1.5 sm:p-2.5">Asr</th>
+                    <th className="p-1.5 sm:p-2.5">Shom</th>
+                    <th className="p-1.5 sm:p-2.5">Xufton</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -489,17 +489,17 @@ export default function PrayerTimesCard({ lang }) {
                     return (
                       <tr
                         key={index}
-                        className={`border-b border-slate-800 ${
+                        className={`border-b border-slate-800/60 ${
                           isToday ? 'bg-amber-500/20 font-bold text-amber-200' : 'hover:bg-slate-800/50'
                         }`}
                       >
-                        <td className="p-2">{dayData.date.gregorian.day}</td>
-                        <td className="p-2">{dayData.timings.Fajr.split(' ')[0]}</td>
-                        <td className="p-2">{dayData.timings.Sunrise.split(' ')[0]}</td>
-                        <td className="p-2">{dayData.timings.Dhuhr.split(' ')[0]}</td>
-                        <td className="p-2">{dayData.timings.Asr.split(' ')[0]}</td>
-                        <td className="p-2">{dayData.timings.Maghrib.split(' ')[0]}</td>
-                        <td className="p-2">{dayData.timings.Isha.split(' ')[0]}</td>
+                        <td className="p-1.5 sm:p-2.5">{dayData.date.gregorian.day}</td>
+                        <td className="p-1.5 sm:p-2.5">{dayData.timings.Fajr.split(' ')[0]}</td>
+                        <td className="p-1.5 sm:p-2.5">{dayData.timings.Sunrise.split(' ')[0]}</td>
+                        <td className="p-1.5 sm:p-2.5">{dayData.timings.Dhuhr.split(' ')[0]}</td>
+                        <td className="p-1.5 sm:p-2.5">{dayData.timings.Asr.split(' ')[0]}</td>
+                        <td className="p-1.5 sm:p-2.5">{dayData.timings.Maghrib.split(' ')[0]}</td>
+                        <td className="p-1.5 sm:p-2.5">{dayData.timings.Isha.split(' ')[0]}</td>
                       </tr>
                     );
                   })}
@@ -511,19 +511,19 @@ export default function PrayerTimesCard({ lang }) {
 
         {/* 4. QIBLA KOMPASI VIEW */}
         {activeTab === 'qibla' && (
-          <div className="py-8 flex flex-col items-center justify-center text-center">
-            <div className="relative w-48 h-48 rounded-full border-4 border-amber-500/40 flex items-center justify-center bg-slate-800/50 shadow-inner">
+          <div className="py-4 sm:py-8 flex flex-col items-center justify-center text-center">
+            <div className="relative w-36 h-36 sm:w-48 sm:h-48 rounded-full border-4 border-amber-500/40 flex items-center justify-center bg-slate-800/50 shadow-inner">
               {/* Kompas ko'rsatgichi */}
               <div
-                className="w-1 h-24 bg-gradient-to-t from-transparent to-amber-400 absolute transition-transform duration-700 rounded-full"
+                className="w-1 h-16 sm:h-24 bg-gradient-to-t from-transparent to-amber-400 absolute transition-transform duration-700 rounded-full"
                 style={{ transform: `rotate(${qiblaDegree || 240}deg)` }}
               >
-                <div className="w-3 h-3 bg-amber-300 rounded-full -top-1 -left-1 absolute animate-ping" />
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-amber-300 rounded-full -top-1 -left-0.75 sm:-left-1 absolute animate-ping" />
               </div>
-              <span className="text-2xl font-bold text-amber-300">🕋</span>
+              <span className="text-lg sm:text-2xl font-bold text-amber-300">🕋</span>
             </div>
-            <p className="text-xs text-slate-400 mt-4">
-              {qiblaDegree ? `Makkaga yo'nalish: ${Math.round(qiblaDegree)}°` : "GPS tugmasini bosib darajani aniqlang"}
+            <p className="text-[11px] sm:text-xs text-slate-400 mt-3 sm:mt-4 px-2">
+              {qiblaDegree ? `Makkaga yo'nalish: ${Math.round(qiblaDegree)}°` : "GPS tugmasini (📍) bosib burchakni aniqlang"}
             </p>
           </div>
         )}
