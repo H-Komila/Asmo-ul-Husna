@@ -7,12 +7,11 @@ import { translations } from './data/translations';
 import { duasData } from './data/duasData';
 import { hadithsData } from './data/hadithsData';
 
-// Komponentlar importi
+// Komponentlar importi (TO'G'RILANDI: PrayerTimesCard.jsx faylidan import qilindi)
 import Navbar from './components/Navbar';
 import PrayerTimesCard from './components/PrayerTimes';
 import ProgressBar from './components/ProgressBar';
 import NameCard from './components/NameCard';
-
 
 // Modallar importi
 import TasbehModal from './components/modals/TasbehModal';
@@ -31,7 +30,7 @@ import "./App.css";
 
 export default function AsmaUlHusnaApp() {
   const [lang, setLang] = useState('uz');
-  const t = translations[lang];
+  const t = translations[lang] || translations['uz'];
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -251,6 +250,8 @@ export default function AsmaUlHusnaApp() {
           <span>Ovoz Tezligi ({playbackRate}x)</span>
         </button>
       </div>
+
+      {/* Namoz vaqtlari kartasi (Bitta joyda chaqirildi) */}
       <PrayerTimesCard lang={lang} />
 
       <ProgressBar
@@ -260,8 +261,6 @@ export default function AsmaUlHusnaApp() {
         sortType={sortType}
         setSortType={setSortType}
       />
-
-      
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <div className="text-center mb-6 sm:mb-8">
@@ -280,8 +279,7 @@ export default function AsmaUlHusnaApp() {
             />
             <button
               onClick={startVoiceSearch}
-              className={`absolute right-3.5 sm:right-4 p-1.5 sm:p-2 rounded-full transition ${isListening ? 'bg-red-500 text-white animate-pulse' : 'text-slate-400 hover:text-amber-400'
-                }`}
+              className={`absolute right-3.5 sm:right-4 p-1.5 sm:p-2 rounded-full transition ${isListening ? 'bg-red-500 text-white animate-pulse' : 'text-slate-400 hover:text-amber-400'}`}
             >
               🎤
             </button>

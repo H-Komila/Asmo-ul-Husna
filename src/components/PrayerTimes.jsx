@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { translations } from '../data/translations';
 
 export default function PrayerTimesCard({ lang }) {
@@ -34,11 +34,11 @@ export default function PrayerTimesCard({ lang }) {
   const t = translations[lang] || { prayerTitle: "Namoz Vaqtlari" };
   const audioRef = useRef(null);
 
-  // Azon manbalari
+  // Yaxshilangan va doimiy ishlaydigan Azon manbalari
   const adhanAudioSources = {
-    makkah: "https://cdn.islamic.finder/azan/makkah.mp3",
-    madinah: "https://cdn.islamic.finder/azan/madinah.mp3",
-    egypt: "https://cdn.islamic.finder/azan/egypt.mp3"
+    makkah: "https://media.islambook.com/audio/azan/makkah.mp3",
+    madinah: "https://media.islambook.com/audio/azan/madinah.mp3",
+    egypt: "https://media.islambook.com/audio/azan/egypt.mp3"
   };
 
   const prayerNames = [
@@ -52,6 +52,7 @@ export default function PrayerTimesCard({ lang }) {
 
   // 1. Bugungi va oylik vaqtlarni API va Offline kesh orqali olish
   useEffect(() => {
+    let isMounted = true;
     setLoading(true);
     localStorage.setItem('prayer_city', city);
     localStorage.setItem('prayer_method', method);
@@ -64,32 +65,34 @@ export default function PrayerTimesCard({ lang }) {
     fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Uzbekistan&method=${method}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.data) {
+        if (isMounted && data.data) {
           setPrayerTimes(data.data.timings);
           setHijriDate(data.data.date.hijri);
           localStorage.setItem(`cache_today_${city}`, JSON.stringify(data.data));
+          setLoading(false);
         }
-        setLoading(false);
       })
       .catch(() => {
-        // Offline keshdan tiklash
-        const cached = localStorage.getItem(`cache_today_${city}`);
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          setPrayerTimes(parsed.timings);
-          setHijriDate(parsed.date.hijri);
+        if (isMounted) {
+          const cached = localStorage.getItem(`cache_today_${city}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            setPrayerTimes(parsed.timings);
+            setHijriDate(parsed.date.hijri);
+          }
+          setLoading(false);
         }
-        setLoading(false);
       });
 
     // Oylik vaqtlar
     fetch(`https://api.aladhan.com/v1/calendarByCity?city=${city}&country=Uzbekistan&method=${method}&month=${month}&year=${year}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.data) setMonthlyData(data.data);
+        if (isMounted && data.data) setMonthlyData(data.data);
       })
       .catch((err) => console.log('Oylik ma\'lumot xatosi:', err));
 
+    return () => { isMounted = false; };
   }, [city, method]);
 
   // 2. Settings-ni saqlash
@@ -130,7 +133,6 @@ export default function PrayerTimesCard({ lang }) {
               setLoading(false);
             });
 
-          // Qibla burchagini olish
           fetch(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`)
             .then((res) => res.json())
             .then((data) => {
@@ -145,11 +147,11 @@ export default function PrayerTimesCard({ lang }) {
     }
   };
 
-  // 5. Taymer, Aktiv namoz va Bildirishnomalar
+  // 5. Taymer va Orqaga hisoblash mantiqini optimallashtirish
   useEffect(() => {
     if (!prayerTimes) return;
 
-    const timer = setInterval(() => {
+    const calculateCountdown = () => {
       const now = new Date();
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -165,7 +167,7 @@ export default function PrayerTimesCard({ lang }) {
         const prayerMinutes = h * 60 + m;
 
         if (prayerMinutes > currentMinutes) {
-          upcoming = { ...prayerNames[i], minutes: prayerMinutes };
+          upcoming = { ...prayerNames[i], targetTime: new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0) };
           currentActive = i > 0 ? prayerNames[i - 1].key : 'Isha';
           break;
         }
@@ -173,19 +175,17 @@ export default function PrayerTimesCard({ lang }) {
 
       if (!upcoming) {
         const [h, m] = prayerTimes['Fajr'].split(':').map(Number);
-        upcoming = { ...prayerNames[0], minutes: h * 60 + m + 24 * 60 };
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(h, m, 0, 0);
+        upcoming = { ...prayerNames[0], targetTime: tomorrow };
         currentActive = 'Isha';
       }
 
       setActivePrayer(currentActive);
       setNextPrayer(upcoming);
 
-      let diffMinutes = upcoming.minutes - currentMinutes;
-      const targetTime = new Date();
-      targetTime.setMinutes(targetTime.getMinutes() + diffMinutes);
-      targetTime.setSeconds(0);
-
-      const diffMs = targetTime - now;
+      const diffMs = upcoming.targetTime - now;
       const hrs = Math.floor(diffMs / (1000 * 60 * 60));
       const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
       const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
@@ -194,33 +194,36 @@ export default function PrayerTimesCard({ lang }) {
         `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
       );
 
-      // Vaqt kelganda bildirishnoma va Azon
+      // Bildirishnoma va Azon ijro etish
       const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-      prayerNames.forEach((item) => {
-        if (prayerTimes[item.key] === currentTimeStr && now.getSeconds() === 0) {
-          if (notificationsEnabled) {
-            new Notification(`${item.name} vaqti bo'ldi! ${item.icon}`, {
-              body: `${city} shahri uchun ${item.name} namozi vaqti kirdi.`,
-            });
+      if (now.getSeconds() === 0) {
+        prayerNames.forEach((item) => {
+          if (prayerTimes[item.key] === currentTimeStr) {
+            if (notificationsEnabled) {
+              new Notification(`${item.name} vaqti bo'ldi! ${item.icon}`, {
+                body: `${city} shahri uchun ${item.name} namozi vaqti kirdi.`,
+              });
+            }
+            if (soundEnabled && audioRef.current) {
+              audioRef.current.play().catch((err) => console.log('Audio autoplay xatosi:', err));
+            }
           }
-          if (soundEnabled && audioRef.current) {
-            audioRef.current.play().catch((err) => console.log('Audio error:', err));
-          }
-        }
-      });
-    }, 1000);
+        });
+      }
+    };
+
+    calculateCountdown();
+    const timer = setInterval(calculateCountdown, 1000);
 
     return () => clearInterval(timer);
   }, [prayerTimes, notificationsEnabled, soundEnabled, city]);
 
-  // PDF / Chop etish
   const handlePrint = () => {
     window.print();
   };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 my-2 sm:my-6 print:m-0 print:p-0">
-      {/* Audio pleyer */}
       <audio ref={audioRef} src={adhanAudioSources[selectedAdhan]} preload="auto" />
 
       <div className="bg-slate-900/90 border border-amber-500/30 backdrop-blur-md rounded-2xl sm:rounded-3xl p-2.5 sm:p-6 shadow-2xl text-slate-100">
@@ -241,7 +244,7 @@ export default function PrayerTimesCard({ lang }) {
             </div>
           </div>
 
-          {/* Menyu Tugmalari (Mobil responsive grid) */}
+          {/* Menyu Tugmalari */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 w-full lg:w-auto">
             <button
               onClick={handleGPSLocation}
@@ -294,7 +297,7 @@ export default function PrayerTimesCard({ lang }) {
           </div>
         </div>
 
-        {/* Tab Navigator (Scrollable) */}
+        {/* Tab Navigator */}
         <div className="flex border-b border-amber-500/20 mb-4 sm:mb-6 gap-1.5 print:hidden overflow-x-auto pb-2 scrollbar-none">
           {[
             { id: 'daily', label: 'Kunlik', icon: '🗓️' },
@@ -355,10 +358,9 @@ export default function PrayerTimesCard({ lang }) {
           </div>
         )}
 
-        {/* 1. KUNLIK KO'RINISH (DAILY VIEW) */}
+        {/* 1. KUNLIK KO'RINISH */}
         {activeTab === 'daily' && (
           <>
-            {/* Next Prayer Countdown */}
             {nextPrayer && !loading && (
               <div className="mb-4 p-2.5 sm:p-4 bg-slate-800/60 border border-amber-500/20 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
                 <div className="flex items-center gap-2 sm:gap-3">
@@ -375,7 +377,6 @@ export default function PrayerTimesCard({ lang }) {
               </div>
             )}
 
-            {/* Namoz vaqtlari grid-i */}
             {loading ? (
               <div className="text-amber-400 text-xs animate-pulse py-8 text-center">Yuklanmoqda...</div>
             ) : (
@@ -409,7 +410,6 @@ export default function PrayerTimesCard({ lang }) {
               </div>
             )}
 
-            {/* Kunlik Oyat / Hadis Karti */}
             <div className="mt-4 p-3 sm:p-4 bg-slate-800/40 border border-amber-500/20 rounded-xl sm:rounded-2xl text-center">
               <span className="text-[9px] sm:text-xs text-amber-400/80 font-bold tracking-wider uppercase">Kun Oyati</span>
               <p className="text-[11px] sm:text-sm text-slate-300 italic mt-1 leading-normal">
@@ -419,7 +419,7 @@ export default function PrayerTimesCard({ lang }) {
           </>
         )}
 
-        {/* 2. RAMAZON / RO'ZA REJIMI */}
+        {/* 2. RAMAZON REJIMI */}
         {activeTab === 'ramadan' && prayerTimes && (
           <div className="space-y-3 sm:space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
@@ -439,7 +439,6 @@ export default function PrayerTimesCard({ lang }) {
               </div>
             </div>
 
-            {/* Duolar */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 text-left">
               <div className="p-3 sm:p-4 bg-slate-800/30 border border-slate-700 rounded-xl">
                 <h4 className="text-[11px] sm:text-xs font-bold text-amber-400 mb-1">Saharlik (Ogʻiz yopish) duosi:</h4>
@@ -513,7 +512,6 @@ export default function PrayerTimesCard({ lang }) {
         {activeTab === 'qibla' && (
           <div className="py-4 sm:py-8 flex flex-col items-center justify-center text-center">
             <div className="relative w-36 h-36 sm:w-48 sm:h-48 rounded-full border-4 border-amber-500/40 flex items-center justify-center bg-slate-800/50 shadow-inner">
-              {/* Kompas ko'rsatgichi */}
               <div
                 className="w-1 h-16 sm:h-24 bg-gradient-to-t from-transparent to-amber-400 absolute transition-transform duration-700 rounded-full"
                 style={{ transform: `rotate(${qiblaDegree || 240}deg)` }}
