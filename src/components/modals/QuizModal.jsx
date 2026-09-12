@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocalStorage } from "../../hooks/useLocalStorage"; // <-- Import qo'shildi
 
 export default function QuizModal({ isOpen, onClose, namesData, lang }) {
+  const [highScore, setHighScore] = useLocalStorage('quiz_highscore', 0);
+  const [isSoundEnabled, setIsSoundEnabled] = useLocalStorage('quiz_sound_enabled', true); // <-- LocalStorage ga o'tkazildi
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -10,11 +14,10 @@ export default function QuizModal({ isOpen, onClose, namesData, lang }) {
   const [options, setOptions] = useState([]);
   const [quizList, setQuizList] = useState([]);
   const [timeLeft, setTimeLeft] = useState(15);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   const audioCtxRef = useRef(null);
 
-  // Audio effektlarni yaratish (To'g'ri / Noto'g'ri javob uchun)
+  // Audio effektlarni yaratish
   const playFeedbackSound = (isCorrect) => {
     if (!isSoundEnabled) return;
     try {
@@ -29,14 +32,14 @@ export default function QuizModal({ isOpen, onClose, namesData, lang }) {
 
       if (isCorrect) {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15); // E5
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15);
         gain.gain.setValueAtTime(0.2, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
       } else {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
-        osc.frequency.exponentialRampToValueAtTime(130, ctx.currentTime + 0.2); // C3
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(130, ctx.currentTime + 0.2);
         gain.gain.setValueAtTime(0.2, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
       }
@@ -110,6 +113,13 @@ export default function QuizModal({ isOpen, onClose, namesData, lang }) {
 
     return () => clearInterval(timer);
   }, [timeLeft, isAnswered, isFinished, isOpen, quizList]);
+
+  // HighScore-ni yangilash mantig'i
+  useEffect(() => {
+    if (isFinished && score > highScore) {
+      setHighScore(score);
+    }
+  }, [isFinished, score, highScore, setHighScore]);
 
   if (!isOpen || quizList.length === 0) return null;
 
@@ -282,9 +292,24 @@ export default function QuizModal({ isOpen, onClose, namesData, lang }) {
               <p className="text-slate-300 text-sm">
                 Siz <strong>{quizList.length}</strong> ta savoldan <strong>{score}</strong> tasiga to'g'ri javob berdingiz.
               </p>
-              <div className="text-4xl font-extrabold bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent py-1">
-                {Math.round((score / quizList.length) * 100)}%
+              
+              {/* Natija va Eng yuqori ball (HighScore) */}
+              <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-4 my-2 flex justify-around items-center">
+                <div>
+                  <span className="text-xs text-slate-400 block">Joriy Natija</span>
+                  <span className="text-2xl font-extrabold text-amber-400">
+                    {Math.round((score / quizList.length) * 100)}%
+                  </span>
+                </div>
+                <div className="h-8 w-[1px] bg-slate-700" />
+                <div>
+                  <span className="text-xs text-slate-400 block">Eng Yuqori Rekord</span>
+                  <span className="text-2xl font-extrabold text-emerald-400">
+                    {highScore} / {quizList.length}
+                  </span>
+                </div>
               </div>
+
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={restartQuiz}

@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TasbehModal({ isOpen, onClose, selectedItem, lang }) {
-  const [count, setCount] = useState(0);
-  const [targetCount, setTargetCount] = useState(33);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
-  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
+ const [count, setCount] = useLocalStorage('tasbeh_count', 0);
+const [isSoundEnabled, setIsSoundEnabled] = useLocalStorage('app_sound_enabled', true);
+const [isVoiceEnabled, setIsVoiceEnabled] = useLocalStorage('app_voice_enabled', false);
 
   const audioCtxRef = useRef(null);
 
