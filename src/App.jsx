@@ -26,7 +26,6 @@ import AudioSettingsModal from './components/modals/AudioSettingsModal';
 import DailyNameModal from './components/modals/DailyNameModal';
 import QiblaModal from './components/modals/QiblaModal';
 import HadithsModal from './components/modals/HadithsModal';
-import TagFilter from './components/modals/TagFilter';
 
 import "./App.css";
 
@@ -262,10 +261,7 @@ export default function AsmaUlHusnaApp() {
         setSortType={setSortType}
       />
 
-      <TagFilter
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
+      
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <div className="text-center mb-6 sm:mb-8">
