@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocalStorage } from '../../hooks/useLocalStorage'; // <-- Import yo'li to'g'rilandi
 
 export default function TasbehModal({ isOpen, onClose, selectedItem, lang }) {
- const [count, setCount] = useLocalStorage('tasbeh_count', 0);
-const [isSoundEnabled, setIsSoundEnabled] = useLocalStorage('app_sound_enabled', true);
-const [isVoiceEnabled, setIsVoiceEnabled] = useLocalStorage('app_voice_enabled', false);
+  const [count, setCount] = useLocalStorage('tasbeh_count', 0);
+  const [isSoundEnabled, setIsSoundEnabled] = useLocalStorage('app_sound_enabled', true);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useLocalStorage('app_voice_enabled', false);
+  const [targetCount, setTargetCount] = useState(33); // <-- Etishmayotgan state qo'shildi
 
   const audioCtxRef = useRef(null);
 
@@ -45,7 +47,7 @@ const [isVoiceEnabled, setIsVoiceEnabled] = useLocalStorage('app_voice_enabled',
   const speakArabic = (text) => {
     if (!isVoiceEnabled || !('speechSynthesis' in window) || !text) return;
     
-    window.speechSynthesis.cancel(); // Oldingi ovoz bo'lsa to'xtatish
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ar-SA';
     utterance.rate = 0.9;
@@ -62,7 +64,7 @@ const [isVoiceEnabled, setIsVoiceEnabled] = useLocalStorage('app_voice_enabled',
         window.speechSynthesis.cancel();
       }
     };
-  }, [isOpen, selectedItem]);
+  }, [isOpen, selectedItem, setCount]);
 
   if (!isOpen || !selectedItem) return null;
 
@@ -72,15 +74,12 @@ const [isVoiceEnabled, setIsVoiceEnabled] = useLocalStorage('app_voice_enabled',
     : selectedItem?.meaning || '';
 
   const handleIncrement = () => {
-    // 1. Ovoz effektini ijro etish
     playClickSound();
 
-    // 2. Vibratsiya
     if (navigator.vibrate) {
       navigator.vibrate(40);
     }
 
-    // 3. Arabcha zikrni talaffuz qilish (agar yoqilgan bo'lsa)
     if (isVoiceEnabled && selectedItem?.arabic) {
       speakArabic(selectedItem.arabic);
     }
@@ -131,7 +130,7 @@ const [isVoiceEnabled, setIsVoiceEnabled] = useLocalStorage('app_voice_enabled',
             </button>
             <button
               onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}
-              title="Arabcha qirolati"
+              title="Arabcha qiroat"
               className={`p-2 text-xs rounded-full border transition ${
                 isVoiceEnabled
                   ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
