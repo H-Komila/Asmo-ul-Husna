@@ -13,6 +13,7 @@ import PrayerTimesCard from './components/PrayerTimes';
 import ProgressBar from './components/ProgressBar';
 import NameCard from './components/NameCard';
 
+
 // Modallar importi
 import TasbehModal from './components/modals/TasbehModal';
 import QuizModal from './components/modals/QuizModal';
@@ -22,6 +23,10 @@ import MatchGameModal from './components/modals/MatchGameModal';
 import CardExportModal from './components/modals/CardExportModal';
 import DailyStreakModal from './components/modals/DailyStreakModal';
 import AudioSettingsModal from './components/modals/AudioSettingsModal';
+import DailyNameModal from './components/modals/DailyNameModal';
+import QiblaModal from './components/modals/QiblaModal';
+import HadithsModal from './components/modals/HadithsModal';
+import TagFilter from './components/modals/TagFilter';
 
 import "./App.css";
 
@@ -30,6 +35,7 @@ export default function AsmaUlHusnaApp() {
   const t = translations[lang];
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem('favNames')) || []);
   const [learnedNames, setLearnedNames] = useState(() => JSON.parse(localStorage.getItem('learnedNames')) || []);
   const [sortType, setSortType] = useState('default');
@@ -162,12 +168,14 @@ export default function AsmaUlHusnaApp() {
     const search = searchTerm ? searchTerm.toLowerCase().trim() : '';
     const transText = (item.transliteration || item.trans || '').toLowerCase();
     const meaningText = (typeof item.meaning === 'object' ? (item.meaning[lang] || '') : (item.meaning || '')).toLowerCase();
-    
-    const matchesSearch = transText.includes(search) ||
-                          meaningText.includes(search) ||
-                          String(item.id) === search;
 
-    return isFavOnly ? matchesSearch && favorites.includes(item.id) : matchesSearch;
+    const matchesSearch = transText.includes(search) ||
+      meaningText.includes(search) ||
+      String(item.id) === search;
+
+    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+
+    return isFavOnly ? matchesSearch && matchesCategory && favorites.includes(item.id) : matchesSearch && matchesCategory;
   });
 
   if (sortType === 'alphabet') {
@@ -182,7 +190,7 @@ export default function AsmaUlHusnaApp() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 pb-16 sm:pb-20 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'}`}>
-      
+
       <Navbar
         isAutoPlay={isAutoPlay}
         startAutoPlayAll={startAutoPlayAll}
@@ -202,30 +210,48 @@ export default function AsmaUlHusnaApp() {
         startQuiz={() => setActiveModal('quiz')}
       />
 
-      {/* Tezkor Tugmalar paneli (Streak, Match, Audio Sozlama) */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 pt-4 flex flex-wrap gap-2 justify-center">
+      {/* Tezkor Funksiyalar Paneli */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 pt-5 flex flex-wrap gap-2.5 justify-center">
+        <button
+          onClick={() => setActiveModal('dailyName')}
+          className="px-3.5 py-2 bg-slate-900/80 border border-amber-500/30 text-amber-300 rounded-2xl text-xs font-medium hover:border-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2 shadow-sm backdrop-blur-sm"
+        >
+          <span className="text-sm">🌟</span>
+          <span>Kun Hikmati va Ismi</span>
+        </button>
+
+        <button
+          onClick={() => setActiveModal('qibla')}
+          className="px-3.5 py-2 bg-slate-900/80 border border-amber-500/30 text-amber-300 rounded-2xl text-xs font-medium hover:border-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2 shadow-sm backdrop-blur-sm"
+        >
+          <span className="text-sm">🧭</span>
+          <span>Qibla Yonalishi</span>
+        </button>
+
         <button
           onClick={() => setActiveModal('streak')}
-          className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-xs font-semibold hover:bg-amber-500/20 transition flex items-center gap-1.5"
+          className="px-3.5 py-2 bg-slate-900/80 border border-amber-500/30 text-amber-300 rounded-2xl text-xs font-medium hover:border-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2 shadow-sm backdrop-blur-sm"
         >
-          🔥 Streak & Statistika
+          <span className="text-sm">🔥</span>
+          <span>Yutuqlar va Statistika</span>
         </button>
 
         <button
           onClick={() => setActiveModal('matchGame')}
-          className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-xs font-semibold hover:bg-amber-500/20 transition flex items-center gap-1.5"
+          className="px-3.5 py-2 bg-slate-900/80 border border-amber-500/30 text-amber-300 rounded-2xl text-xs font-medium hover:border-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2 shadow-sm backdrop-blur-sm"
         >
-          🧩 Moslash O'yini
+          <span className="text-sm">🧩</span>
+          <span>Juftlikni Top Oyini</span>
         </button>
 
         <button
           onClick={() => setActiveModal('audioSettings')}
-          className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-xs font-semibold hover:bg-amber-500/20 transition flex items-center gap-1.5"
+          className="px-3.5 py-2 bg-slate-900/80 border border-amber-500/30 text-amber-300 rounded-2xl text-xs font-medium hover:border-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2 shadow-sm backdrop-blur-sm"
         >
-          ⚙️ Audio ({playbackRate}x)
+          <span className="text-sm">⚙️</span>
+          <span>Ovoz Tezligi ({playbackRate}x)</span>
         </button>
       </div>
-
       <PrayerTimesCard lang={lang} />
 
       <ProgressBar
@@ -236,13 +262,18 @@ export default function AsmaUlHusnaApp() {
         setSortType={setSortType}
       />
 
+      <TagFilter
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
+
       <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-3xl sm:text-5xl font-extrabold bg-gradient-to-r from-yellow-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">
             {t.title}
           </h1>
           <p className="text-slate-400 mt-1.5 sm:mt-2 text-xs sm:text-sm">{t.subtitle}</p>
-          
+
           <div className="relative mt-4 sm:mt-6 max-w-xl mx-auto flex items-center">
             <input
               type="text"
@@ -253,9 +284,8 @@ export default function AsmaUlHusnaApp() {
             />
             <button
               onClick={startVoiceSearch}
-              className={`absolute right-3.5 sm:right-4 p-1.5 sm:p-2 rounded-full transition ${
-                isListening ? 'bg-red-500 text-white animate-pulse' : 'text-slate-400 hover:text-amber-400'
-              }`}
+              className={`absolute right-3.5 sm:right-4 p-1.5 sm:p-2 rounded-full transition ${isListening ? 'bg-red-500 text-white animate-pulse' : 'text-slate-400 hover:text-amber-400'
+                }`}
             >
               🎤
             </button>
@@ -345,6 +375,26 @@ export default function AsmaUlHusnaApp() {
         onClose={() => setActiveModal(null)}
         playbackRate={playbackRate}
         setPlaybackRate={setPlaybackRate}
+      />
+
+      <DailyNameModal
+        isOpen={activeModal === 'dailyName'}
+        onClose={() => setActiveModal(null)}
+        namesData={namesData}
+        lang={lang}
+        openTasbeh={openTasbeh}
+      />
+
+      <QiblaModal
+        isOpen={activeModal === 'qibla'}
+        onClose={() => setActiveModal(null)}
+      />
+
+      <HadithsModal
+        isOpen={activeModal === 'hadiths'}
+        onClose={() => setActiveModal(null)}
+        hadithsData={hadithsData}
+        lang={lang}
       />
     </div>
   );

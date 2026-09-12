@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
+
+.font-arabic {
+  font-family: 'Amiri', serif;
+}
 /* Mobil ekranda skrollni ravon qilish va kartochkalar ko'rinishi */
 body {
   -webkit-tap-highlight-color: transparent;
