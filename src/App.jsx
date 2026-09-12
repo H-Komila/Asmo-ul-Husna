@@ -18,8 +18,10 @@ import TasbehModal from './components/modals/TasbehModal';
 import QuizModal from './components/modals/QuizModal';
 import FlashcardModal from './components/modals/FlashcardModal';
 import DuasModal from './components/modals/DuasModal';
-import HadithsModal from './components/modals/HadithsModal';
-import RandomModal from './components/modals/RandomModal';
+import MatchGameModal from './components/modals/MatchGameModal';
+import CardExportModal from './components/modals/CardExportModal';
+import DailyStreakModal from './components/modals/DailyStreakModal';
+import AudioSettingsModal from './components/modals/AudioSettingsModal';
 
 import "./App.css";
 
@@ -34,16 +36,17 @@ export default function AsmaUlHusnaApp() {
   const [isFavOnly, setIsFavOnly] = useState(false);
   const [isDark, setIsDark] = useState(true);
 
-  // Audio & Auto-Play
+  // Audio & Speed
   const [playingAudioId, setPlayingAudioId] = useState(null);
   const [isAutoPlay, setIsAutoPlay] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
   const autoPlayIndex = useRef(0);
   const audioRef = useRef(new Audio());
 
-  // Voice Search & Modals
-  const [isListening, setIsListening] = useState(false);
+  // Modals state
   const [activeModal, setActiveModal] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isListening, setIsListening] = useState(false);
 
   // PWA
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -55,6 +58,12 @@ export default function AsmaUlHusnaApp() {
   useEffect(() => {
     localStorage.setItem('learnedNames', JSON.stringify(learnedNames));
   }, [learnedNames]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
 
   useEffect(() => {
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -81,6 +90,7 @@ export default function AsmaUlHusnaApp() {
       setIsAutoPlay(false);
     } else {
       audioRef.current.src = `https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/${item.audio || String(item.id).padStart(3, '0')}.mp3`;
+      audioRef.current.playbackRate = playbackRate;
       audioRef.current.play().catch(() => {
         const utterance = new SpeechSynthesisUtterance(item.arabic);
         utterance.lang = 'ar-SA';
@@ -138,32 +148,14 @@ export default function AsmaUlHusnaApp() {
     setLearnedNames(prev => prev.includes(id) ? prev.filter(lId => lId !== id) : [...prev, id]);
   };
 
-  const shareToSocial = (item, platform) => {
-    const trans = item.transliteration || item.trans || '';
-    const meaning = typeof item.meaning === 'object' ? item.meaning[lang] : item.meaning;
-    
-    const text = encodeURIComponent(`✨ Asmoul Husno: ${trans} (${item.arabic})\n📖 Ma'nosi: ${meaning}`);
-    if (platform === 'telegram') window.open(`https://t.me/share/url?url=${window.location.href}&text=${text}`);
-    else if (platform === 'whatsapp') window.open(`https://api.whatsapp.com/send?text=${text}`);
-  };
-
-  const copyText = (item) => {
-    const trans = item.transliteration || item.trans || '';
-    const meaning = typeof item.meaning === 'object' ? item.meaning[lang] : item.meaning;
-
-    const text = `✨ Asmoul Husno: ${trans} (${item.arabic})\n📖 Ma'nosi: ${meaning}`;
-    navigator.clipboard.writeText(text);
-    alert("Nusxalandi!");
+  const openExportModal = (item) => {
+    setSelectedItem(item);
+    setActiveModal('exportCard');
   };
 
   const openTasbeh = (item = namesData[0]) => {
     setSelectedItem(item);
     setActiveModal('tasbeh');
-  };
-
-  const handleNextRandom = () => {
-    const randomItem = namesData[Math.floor(Math.random() * namesData.length)];
-    setSelectedItem(randomItem);
   };
 
   let filteredData = namesData.filter(item => {
@@ -196,8 +188,6 @@ export default function AsmaUlHusnaApp() {
         startAutoPlayAll={startAutoPlayAll}
         t={t}
         setActiveModal={setActiveModal}
-        setFcIndex={() => {}}
-        setIsFlipped={() => {}}
         openTasbeh={openTasbeh}
         namesData={namesData}
         setSelectedItem={setSelectedItem}
@@ -211,6 +201,30 @@ export default function AsmaUlHusnaApp() {
         setIsDark={setIsDark}
         startQuiz={() => setActiveModal('quiz')}
       />
+
+      {/* Tezkor Tugmalar paneli (Streak, Match, Audio Sozlama) */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 pt-4 flex flex-wrap gap-2 justify-center">
+        <button
+          onClick={() => setActiveModal('streak')}
+          className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-xs font-semibold hover:bg-amber-500/20 transition flex items-center gap-1.5"
+        >
+          🔥 Streak & Statistika
+        </button>
+
+        <button
+          onClick={() => setActiveModal('matchGame')}
+          className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-xs font-semibold hover:bg-amber-500/20 transition flex items-center gap-1.5"
+        >
+          🧩 Moslash O'yini
+        </button>
+
+        <button
+          onClick={() => setActiveModal('audioSettings')}
+          className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-xs font-semibold hover:bg-amber-500/20 transition flex items-center gap-1.5"
+        >
+          ⚙️ Audio ({playbackRate}x)
+        </button>
+      </div>
 
       <PrayerTimesCard lang={lang} />
 
@@ -251,20 +265,26 @@ export default function AsmaUlHusnaApp() {
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           <AnimatePresence>
             {filteredData.map(item => (
-              <NameCard
-                key={item.id}
-                item={item}
-                lang={lang}
-                favorites={favorites}
-                learnedNames={learnedNames}
-                playingAudioId={playingAudioId}
-                toggleFavorite={toggleFavorite}
-                toggleLearned={toggleLearned}
-                playAudio={playAudio}
-                openTasbeh={openTasbeh}
-                shareToSocial={shareToSocial}
-                copyText={copyText}
-              />
+              <div key={item.id} className="relative group">
+                <NameCard
+                  item={item}
+                  lang={lang}
+                  favorites={favorites}
+                  learnedNames={learnedNames}
+                  playingAudioId={playingAudioId}
+                  toggleFavorite={toggleFavorite}
+                  toggleLearned={toggleLearned}
+                  playAudio={playAudio}
+                  openTasbeh={openTasbeh}
+                />
+                <button
+                  onClick={() => openExportModal(item)}
+                  title="Rasm yuklab olish"
+                  className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition bg-slate-900/80 border border-amber-500/40 text-amber-400 p-1.5 rounded-lg text-xs hover:bg-amber-500 hover:text-slate-950"
+                >
+                  🖼️
+                </button>
+              </div>
             ))}
           </AnimatePresence>
         </motion.div>
@@ -299,21 +319,33 @@ export default function AsmaUlHusnaApp() {
         lang={lang}
       />
 
-      {/* Yo'q komponentlar vaqtincha izohga olindi: */}
-      {<HadithsModal
-        isOpen={activeModal === 'hadiths'}
+      <MatchGameModal
+        isOpen={activeModal === 'matchGame'}
         onClose={() => setActiveModal(null)}
-        hadithsData={hadithsData}
+        namesData={namesData}
         lang={lang}
-      /> }
+      />
 
-      { <RandomModal
-        isOpen={activeModal === 'random'}
+      <CardExportModal
+        isOpen={activeModal === 'exportCard'}
         onClose={() => setActiveModal(null)}
         selectedItem={selectedItem}
         lang={lang}
-        onNextRandom={handleNextRandom}
-      /> }
+      />
+
+      <DailyStreakModal
+        isOpen={activeModal === 'streak'}
+        onClose={() => setActiveModal(null)}
+        learnedCount={learnedNames.length}
+        totalCount={namesData.length}
+      />
+
+      <AudioSettingsModal
+        isOpen={activeModal === 'audioSettings'}
+        onClose={() => setActiveModal(null)}
+        playbackRate={playbackRate}
+        setPlaybackRate={setPlaybackRate}
+      />
     </div>
   );
 }
